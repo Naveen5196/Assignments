@@ -1,0 +1,21 @@
+INDEX : 
+   An index is a data structure such as B-Tree that improves the speed of data retrieval on a table at the cost of additional writes and storage to maintain it.
+  The query optimizer may use indexes to quickly locate data without having to scan every row in a table for a given query.
+  Indexes are also a type of tables, which keep primary key or index field and a pointer to each record into the actual table.
+
+CLUSTERED INDEX :
+  When we create a table with a primary key or unique key, MySQL automatically creates a special index named PRIMARY. This index is called the clustered index.
+ Once a clustered index is created, all rows in the table will be stored according to the key columns used to create the clustered index.
+
+
+SECONDARY INDEXES : 
+  All indexes other than the clustered index are the non-clustered indexes or secondary indexes.
+  each record in the secondary index contains the primary key columns for the row as well as the columns specified in the non-clustered index. MySQL uses this primary key value for the row lookups in the clustered index.
+
+B-TREE INDEXES : 
+   This is the default index for most storage engines in MySql. The general idea of a B-Tree is that all the values are stored in order, and each leaf page is the same distance from the root.
+  A B-Tree index speeds up data access because the storage engine doesn’t have to scan the whole table to find the desired data. Instead, it starts at the root node. The slots in the root node hold pointers to child nodes, and the storage engine follows these pointers. It finds the right pointer by looking at the values in the node pages, which define the upper and lower bounds of the values in the child nodes.
+
+HASH INDEXES :
+ Hash indexes (user controlled) are used only in MEMORY engine and can be used for exact lookups. For each column a hash is calculated and then it’s used for lookups. 
+
