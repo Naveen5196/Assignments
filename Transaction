@@ -1,0 +1,106 @@
+Before new transaction :
+           mysql> select count(*) from orders;
+		+----------+
+		| count(*) |
+		+----------+
+		|      326 |
+		+----------+
+		1 row in set (0.42 sec)
+
+          mysql> select count(*) from orderdetails;
+		+----------+
+		| count(*) |
+		+----------+
+		|     2996 |
+		+----------+
+		1 row in set (0.15 sec)
+
+          mysql> select count(*) from payments;
+		+----------+
+		| count(*) |
+		+----------+
+		|      273 |
+		+----------+
+		1 row in set (0.00 sec)
+
+mysql> use classicmodels;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+
+//Transaction
+
+mysql> start transaction;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select @orderNumber:=MAX(orderNumber)+1 from orders;
++----------------------------------+
+| @orderNumber:=MAX(orderNumber)+1 |
++----------------------------------+
+|                            10426 |
++----------------------------------+
+1 row in set (0.13 sec)
+
+mysql> insert into orders(orderNumber,orderDate,requiredDate,shippedDate,status,customerNumber) values (@orderNumber,'2020-06-01','2020-06-15','2020-06-05','shipped',100);
+Query OK, 1 row affected (0.09 sec)
+
+insert into orderdetails(orderNumber,productCode,quantityOrdered,priceEach,orderLineNumber) values(@orderNumber,'S10_1678',200,'150',1);
+Query OK, 1 row affected (0.26 sec)
+
+insert into payments(customerNumber,checkNumber,paymentDate,amount) values(100,'NS9211','2020-06-20',30000);
+Query OK, 1 row affected (0.13 sec)
+
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+
+// after transaction successfully completed 
+
+         mysql> select count(*) from orders;
+		+----------+
+		| count(*) |
+		+----------+
+		|      327 |
+		+----------+
+                1 row in set (0.00 sec)   
+
+        mysql> select count(*) from orderdetails;
+		+----------+
+		| count(*) |
+		+----------+
+		|     2997 |
+		+----------+
+		1 row in set (0.00 sec)
+
+        mysql> select count(*) from payments;
+		+----------+
+		| count(*) |
+		+----------+
+		|      274 |
+		+----------+
+		1 row in set (0.00 sec)
+
+  mysql> select a.orderNumber,orderDate,customerNumber,productCode,quantityOrdered from orders a inner join orderdetails b using(orderNumber) where a.ordernumber=10426;
++-------------+------------+----------------+-------------+-----------------+
+| orderNumber | orderDate  | customerNumber | productCode | quantityOrdered |
++-------------+------------+----------------+-------------+-----------------+
+|       10426 | 2020-06-01 |            100 | S10_1678    |             200 |
++-------------+------------+----------------+-------------+-----------------+
+1 row in set (0.15 sec)
+
+mysql> select * from payments where customerNumber=100;
++----------------+-------------+-------------+----------+
+| customerNumber | checkNumber | paymentDate | amount   |
++----------------+-------------+-------------+----------+
+|            100 | NS9211      | 2020-06-20  | 30000.00 |
++----------------+-------------+-------------+----------+
+1 row in set (0.23 sec)
+
+
+
+
+
+
+
+
+
